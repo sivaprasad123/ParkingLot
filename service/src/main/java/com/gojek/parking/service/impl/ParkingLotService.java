@@ -4,6 +4,7 @@ import com.gojek.parking.commons.model.Vehicle;
 import com.gojek.parking.commons.utils.LogUtils;
 import com.gojek.parking.service.IParkingLotService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,10 +19,12 @@ public class ParkingLotService implements IParkingLotService {
   private List<Integer> vacantSlots = null;
   private Set<String> parkedVehiclesRegistrationNumSet = null;
   private TreeMap<Integer, Vehicle> parkingLot = null;
+  private Integer maxNumOfVehicles = null;
 
   @Override
   public void createParkingLot(Integer maxNumOfVehicles) {
     if (null != maxNumOfVehicles && maxNumOfVehicles > 0) {
+      this.maxNumOfVehicles = maxNumOfVehicles;
       parkingLot = new TreeMap<>();
       vacantSlots = new ArrayList<>();
       parkedVehiclesRegistrationNumSet = new HashSet<>();
@@ -55,7 +58,18 @@ public class ParkingLotService implements IParkingLotService {
 
   @Override
   public void leave(Integer slotNum) {
-
+    if (parkingLot.containsKey(slotNum)) {
+      Vehicle vehicle = parkingLot.get(slotNum);
+      parkingLot.remove(slotNum);
+      parkedVehiclesRegistrationNumSet.remove(vehicle.getRegistrationNum());
+      vacantSlots.add(slotNum);
+      Collections.sort(vacantSlots);
+      LogUtils.toConsole("Slot number " + slotNum + " is free");
+    } else if (isValidSlotNumber(slotNum)) {
+      LogUtils.toConsole("Parking slot is already vacant");
+    } else {
+      LogUtils.toConsole("Parking slot not exist");
+    }
   }
 
   @Override
@@ -103,5 +117,9 @@ public class ParkingLotService implements IParkingLotService {
 
   private Boolean isParkingLotNotFull() {
     return !(vacantSlots.size() == 0);
+  }
+
+  private Boolean isValidSlotNumber(Integer slotNum) {
+    return slotNum > 0 && slotNum <= maxNumOfVehicles;
   }
 }

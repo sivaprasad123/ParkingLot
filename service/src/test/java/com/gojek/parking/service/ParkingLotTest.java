@@ -45,4 +45,10 @@ public class ParkingLotTest {
     parkingLotService.park(new Vehicle("KA-01- HH-1234", "White"));
     assertTrue("Allocated slot number: 1".equals(outContent.toString().trim()));
   }
+
+  @Test
+  public void leave() {
+    parkingLotService.leave(1);
+    assertTrue("Slot number 1 is free".equals(outContent.toString().trim()));
+  }
 }
