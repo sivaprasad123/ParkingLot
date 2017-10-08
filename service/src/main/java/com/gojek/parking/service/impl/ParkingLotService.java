@@ -6,7 +6,9 @@ import com.gojek.parking.service.IParkingLotService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -74,7 +76,16 @@ public class ParkingLotService implements IParkingLotService {
 
   @Override
   public void status() {
-
+    Iterator<Integer> iterator = parkingLot.keySet().iterator();
+    LogUtils.toConsole("Slot No" + "\t" + "Registration No." + "\t" + "Colour");
+    while (iterator.hasNext()) {
+      Integer slotNumber = iterator.next();
+      Vehicle vehicle = parkingLot.get(slotNumber);
+      /*LogUtils
+          .toConsole(slotNumber + "\t" + vehicle.getRegistrationNum() + "\t" + vehicle.getColor());*/
+      LogUtils
+          .toConsole(slotNumber + "       " + vehicle.getRegistrationNum() + "      " + vehicle.getColor());
+    }
   }
 
   @Override
