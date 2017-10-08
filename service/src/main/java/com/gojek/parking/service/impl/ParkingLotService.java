@@ -81,26 +81,61 @@ public class ParkingLotService implements IParkingLotService {
     while (iterator.hasNext()) {
       Integer slotNumber = iterator.next();
       Vehicle vehicle = parkingLot.get(slotNumber);
-      /*LogUtils
-          .toConsole(slotNumber + "\t" + vehicle.getRegistrationNum() + "\t" + vehicle.getColor());*/
       LogUtils
-          .toConsole(slotNumber + "       " + vehicle.getRegistrationNum() + "      " + vehicle.getColor());
+          .toConsole(slotNumber + "       " + vehicle.getRegistrationNum() + "      " + vehicle
+              .getColor());
     }
   }
 
   @Override
-  public List<String> getRegistrationNumbersByColour(String color) {
-    return null;
+  public void getRegistrationNumbersByColour(String color) {
+    String registrationNumbers = "";
+    Iterator<Integer> iterator = parkingLot.keySet().iterator();
+    while (iterator.hasNext()) {
+      Integer slotNumber = iterator.next();
+      Vehicle vehicle = parkingLot.get(slotNumber);
+      if (vehicle.getColor().equalsIgnoreCase(color)) {
+        registrationNumbers = registrationNumbers + vehicle.getRegistrationNum() + ", ";
+      }
+    }
+    if (registrationNumbers.length() > 0) {
+      LogUtils.toConsole(registrationNumbers.substring(0, registrationNumbers.length() - 2));
+    } else {
+      LogUtils.toConsole("There are no registration numbers with color " + color);
+    }
   }
 
   @Override
-  public List<Integer> getSlotNumbersByColor(String color) {
-    return null;
+  public void getSlotNumbersByColor(String color) {
+    String slotNumbers = "";
+    Iterator<Integer> iterator = parkingLot.keySet().iterator();
+    while (iterator.hasNext()) {
+      Integer slotNumber = iterator.next();
+      Vehicle vehicle = parkingLot.get(slotNumber);
+      if (vehicle.getColor().equalsIgnoreCase(color)) {
+        slotNumbers = slotNumbers + slotNumber + ", ";
+      }
+    }
+    if (slotNumbers.length() > 0) {
+      LogUtils.toConsole(slotNumbers.substring(0, slotNumbers.length() - 2));
+    } else {
+      LogUtils.toConsole("There are no slot numbers with color " + color);
+    }
+
   }
 
   @Override
-  public Integer getSlotNumberByRegistrationNum(String registrationNum) {
-    return null;
+  public void getSlotNumberByRegistrationNum(String registrationNum) {
+    Iterator<Integer> iterator = parkingLot.keySet().iterator();
+    while (iterator.hasNext()) {
+      Integer slotNumber = iterator.next();
+      Vehicle vehicle = parkingLot.get(slotNumber);
+      if (vehicle.getRegistrationNum().equalsIgnoreCase(registrationNum)) {
+        LogUtils.toConsole(slotNumber.toString());
+        return;
+      }
+    }
+    LogUtils.toConsole("Not found");
   }
 
   public static ParkingLotService getParkingLotService() {

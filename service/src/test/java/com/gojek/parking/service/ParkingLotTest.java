@@ -50,30 +50,42 @@ public class ParkingLotTest {
   }
 
   @Test
-  public void t3park() {
+  public void t3Park() {
     parkingLotService.park(new Vehicle("KA-01-HH-9999", "White"));
     assertTrue("Allocated slot number: 2".equals(outContent.toString().trim()));
   }
 
   @Test
-  public void t4park() {
+  public void t4Park() {
     parkingLotService.park(new Vehicle("KA-01-BB-0001", "Black"));
     assertTrue("Allocated slot number: 3".equals(outContent.toString().trim()));
   }
 
   @Test
-  public void t5Park() {
-    parkingLotService.park(new Vehicle("KA-01-HH-2701", "Blue"));
-    assertTrue("Allocated slot number: 4".equals(outContent.toString().trim()));
-  }
-
-  @Test
-  public void t6Status() {
+  public void t5Status() {
     parkingLotService.status();
   }
 
   @Test
-  public void t7Leave() {
+  public void t6GetRegistrationNumbersByColour() {
+    parkingLotService.getRegistrationNumbersByColour("White");
+    assertTrue("KA-01-HH-1234, KA-01-HH-9999".equals(outContent.toString().trim()));
+  }
+
+  @Test
+  public void t7GetSlotNumbersByColor() {
+    parkingLotService.getSlotNumbersByColor("White");
+    assertTrue("1, 2".equals(outContent.toString().trim()));
+  }
+
+  @Test
+  public void t8GetSlotNumberByRegistrationNum() {
+    parkingLotService.getSlotNumberByRegistrationNum("KA-01-HH-9999");
+    assertTrue("2".equals(outContent.toString().trim()));
+  }
+
+  @Test
+  public void t9Leave() {
     parkingLotService.leave(1);
     assertTrue("Slot number 1 is free".equals(outContent.toString().trim()));
   }

@@ -16,9 +16,9 @@ public interface IParkingLotService {
 
   public void status();
 
-  public List<String> getRegistrationNumbersByColour(String color);
+  public void getRegistrationNumbersByColour(String color);
 
-  public List<Integer> getSlotNumbersByColor(String color);
+  public void getSlotNumbersByColor(String color);
 
-  public Integer getSlotNumberByRegistrationNum(String registrationNum);
+  public void getSlotNumberByRegistrationNum(String registrationNum);
 }
