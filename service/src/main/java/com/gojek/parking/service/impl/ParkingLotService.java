@@ -21,6 +21,7 @@ public class ParkingLotService implements IParkingLotService {
   private Set<String> parkedVehiclesRegistrationNumSet = null;
   private TreeMap<Integer, Vehicle> parkingLot = null;
   private Integer maxNumOfVehicles = null;
+  private Boolean hasCreatedParkingLot = false;
 
   @Override
   public void createParkingLot(Integer maxNumOfVehicles) {
@@ -32,6 +33,7 @@ public class ParkingLotService implements IParkingLotService {
       for (int i = 0; i < maxNumOfVehicles; i++) {
         vacantSlots.add(i + 1);
       }
+      hasCreatedParkingLot = true;
       LogUtils.toConsole("Created a parking lot with " + maxNumOfVehicles + " slots");
     } else {
       LogUtils.toConsole(
@@ -41,100 +43,123 @@ public class ParkingLotService implements IParkingLotService {
 
   @Override
   public void park(Vehicle vehicle) {
-    if (hasVehicleNotParked(vehicle)) {
-      if (isParkingLotNotFull()) {
-        Integer parkingSlot = getNearByParkingSlot();
-        parkingLot.put(parkingSlot, vehicle);
-        parkedVehiclesRegistrationNumSet.add(vehicle.getRegistrationNum());
-        vacantSlots.remove(parkingSlot);
-        LogUtils.toConsole("Allocated slot number: " + parkingSlot);
+    if (hasCreatedParkingLot) {
+      if (hasVehicleNotParked(vehicle)) {
+        if (isParkingLotNotFull()) {
+          Integer parkingSlot = getNearByParkingSlot();
+          parkingLot.put(parkingSlot, vehicle);
+          parkedVehiclesRegistrationNumSet.add(vehicle.getRegistrationNum());
+          vacantSlots.remove(parkingSlot);
+          LogUtils.toConsole("Allocated slot number: " + parkingSlot);
+        } else {
+          LogUtils.toConsole("Sorry, parking lot is full");
+        }
       } else {
-        LogUtils.toConsole("Sorry, parking lot is full");
+        LogUtils.toConsole(
+            "Vehicle with Registration Num " + vehicle.getRegistrationNum() + " already parked");
       }
     } else {
-      LogUtils.toConsole(
-          "Vehicle with Registration Num " + vehicle.getRegistrationNum() + " already parked");
+      LogUtils.toConsole("ParkingLot is not yet created");
     }
   }
 
   @Override
   public void leave(Integer slotNum) {
-    if (parkingLot.containsKey(slotNum)) {
-      Vehicle vehicle = parkingLot.get(slotNum);
-      parkingLot.remove(slotNum);
-      parkedVehiclesRegistrationNumSet.remove(vehicle.getRegistrationNum());
-      vacantSlots.add(slotNum);
-      Collections.sort(vacantSlots);
-      LogUtils.toConsole("Slot number " + slotNum + " is free");
-    } else if (isValidSlotNumber(slotNum)) {
-      LogUtils.toConsole("Parking slot is already vacant");
+    if (hasCreatedParkingLot) {
+      if (parkingLot.containsKey(slotNum)) {
+        Vehicle vehicle = parkingLot.get(slotNum);
+        parkingLot.remove(slotNum);
+        parkedVehiclesRegistrationNumSet.remove(vehicle.getRegistrationNum());
+        vacantSlots.add(slotNum);
+        Collections.sort(vacantSlots);
+        LogUtils.toConsole("Slot number " + slotNum + " is free");
+      } else if (isValidSlotNumber(slotNum)) {
+        LogUtils.toConsole("Parking slot is already vacant");
+      } else {
+        LogUtils.toConsole("Parking slot not exist");
+      }
     } else {
-      LogUtils.toConsole("Parking slot not exist");
+      LogUtils.toConsole("ParkingLot is not yet created");
     }
   }
 
   @Override
   public void status() {
-    Iterator<Integer> iterator = parkingLot.keySet().iterator();
-    LogUtils.toConsole("Slot No" + "\t" + "Registration No." + "\t" + "Colour");
-    while (iterator.hasNext()) {
-      Integer slotNumber = iterator.next();
-      Vehicle vehicle = parkingLot.get(slotNumber);
-      LogUtils
-          .toConsole(slotNumber + "       " + vehicle.getRegistrationNum() + "      " + vehicle
-              .getColor());
+    if (hasCreatedParkingLot) {
+      Iterator<Integer> iterator = parkingLot.keySet().iterator();
+      LogUtils.toConsole("Slot No" + "\t" + "Registration No." + "\t" + "Colour");
+      while (iterator.hasNext()) {
+        Integer slotNumber = iterator.next();
+        Vehicle vehicle = parkingLot.get(slotNumber);
+        LogUtils
+            .toConsole(slotNumber + "       " + vehicle.getRegistrationNum() + "      " + vehicle
+                .getColor());
+      }
+    } else {
+      LogUtils.toConsole("ParkingLot is not yet created");
     }
   }
 
   @Override
   public void getRegistrationNumbersByColour(String color) {
-    String registrationNumbers = "";
-    Iterator<Integer> iterator = parkingLot.keySet().iterator();
-    while (iterator.hasNext()) {
-      Integer slotNumber = iterator.next();
-      Vehicle vehicle = parkingLot.get(slotNumber);
-      if (vehicle.getColor().equalsIgnoreCase(color)) {
-        registrationNumbers = registrationNumbers + vehicle.getRegistrationNum() + ", ";
+    if (hasCreatedParkingLot) {
+      String registrationNumbers = "";
+      Iterator<Integer> iterator = parkingLot.keySet().iterator();
+      while (iterator.hasNext()) {
+        Integer slotNumber = iterator.next();
+        Vehicle vehicle = parkingLot.get(slotNumber);
+        if (vehicle.getColor().equalsIgnoreCase(color)) {
+          registrationNumbers = registrationNumbers + vehicle.getRegistrationNum() + ", ";
+        }
       }
-    }
-    if (registrationNumbers.length() > 0) {
-      LogUtils.toConsole(registrationNumbers.substring(0, registrationNumbers.length() - 2));
+      if (registrationNumbers.length() > 0) {
+        LogUtils.toConsole(registrationNumbers.substring(0, registrationNumbers.length() - 2));
+      } else {
+        LogUtils.toConsole("There are no registration numbers with color " + color);
+      }
     } else {
-      LogUtils.toConsole("There are no registration numbers with color " + color);
+      LogUtils.toConsole("ParkingLot is not yet created");
     }
   }
 
   @Override
   public void getSlotNumbersByColor(String color) {
-    String slotNumbers = "";
-    Iterator<Integer> iterator = parkingLot.keySet().iterator();
-    while (iterator.hasNext()) {
-      Integer slotNumber = iterator.next();
-      Vehicle vehicle = parkingLot.get(slotNumber);
-      if (vehicle.getColor().equalsIgnoreCase(color)) {
-        slotNumbers = slotNumbers + slotNumber + ", ";
+    if (hasCreatedParkingLot) {
+      String slotNumbers = "";
+      Iterator<Integer> iterator = parkingLot.keySet().iterator();
+      while (iterator.hasNext()) {
+        Integer slotNumber = iterator.next();
+        Vehicle vehicle = parkingLot.get(slotNumber);
+        if (vehicle.getColor().equalsIgnoreCase(color)) {
+          slotNumbers = slotNumbers + slotNumber + ", ";
+        }
       }
-    }
-    if (slotNumbers.length() > 0) {
-      LogUtils.toConsole(slotNumbers.substring(0, slotNumbers.length() - 2));
+      if (slotNumbers.length() > 0) {
+        LogUtils.toConsole(slotNumbers.substring(0, slotNumbers.length() - 2));
+      } else {
+        LogUtils.toConsole("There are no slot numbers with color " + color);
+      }
     } else {
-      LogUtils.toConsole("There are no slot numbers with color " + color);
+      LogUtils.toConsole("ParkingLot is not yet created");
     }
-
   }
 
   @Override
   public void getSlotNumberByRegistrationNum(String registrationNum) {
-    Iterator<Integer> iterator = parkingLot.keySet().iterator();
-    while (iterator.hasNext()) {
-      Integer slotNumber = iterator.next();
-      Vehicle vehicle = parkingLot.get(slotNumber);
-      if (vehicle.getRegistrationNum().equalsIgnoreCase(registrationNum)) {
-        LogUtils.toConsole(slotNumber.toString());
-        return;
+    if (hasCreatedParkingLot) {
+      Iterator<Integer> iterator = parkingLot.keySet().iterator();
+      while (iterator.hasNext()) {
+        Integer slotNumber = iterator.next();
+        Vehicle vehicle = parkingLot.get(slotNumber);
+        if (vehicle.getRegistrationNum().equalsIgnoreCase(registrationNum)) {
+          LogUtils.toConsole(slotNumber.toString());
+          return;
+        }
       }
+      LogUtils.toConsole("Not found");
+    } else {
+      LogUtils.toConsole("ParkingLot is not yet created");
     }
-    LogUtils.toConsole("Not found");
   }
 
   public static ParkingLotService getParkingLotService() {
