@@ -1,8 +1,8 @@
-#Shell script (parking_lot.sh)
+# Shell script (parking_lot.sh)
   1. Build maven project
   2. executes the ParkingLotClient.java by passing arguments
 
-#Running the project
+# Running the project
 From the project directory, run this command -
    $ sh parking_lot.sh (Interactive command-line mode)
    $ sh parking_lot.sh file_inputs.txt (File input)
