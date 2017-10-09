@@ -23,6 +23,10 @@ public class ParkingLotService implements IParkingLotService {
   private Integer maxNumOfVehicles = null;
   private Boolean hasCreatedParkingLot = false;
 
+  /**
+   * This will be creating parking lot with given size and initializes all the variables.
+   * @param maxNumOfVehicles
+   */
   @Override
   public void createParkingLot(Integer maxNumOfVehicles) {
     if (null != maxNumOfVehicles && maxNumOfVehicles > 0) {
@@ -41,6 +45,11 @@ public class ParkingLotService implements IParkingLotService {
     }
   }
 
+  /**
+   * This will get the near by parkingSlot If parkingSlot is not full
+   * then parks the vehicle in given slot.
+   * @param vehicle
+   */
   @Override
   public void park(Vehicle vehicle) {
     if (hasCreatedParkingLot) {
@@ -63,6 +72,14 @@ public class ParkingLotService implements IParkingLotService {
     }
   }
 
+  /**
+   *Vacates the slot by slot id.
+   * It will check whether ParkingLot is created or not
+   * If yes then checks whether slot exist or not.
+   * if yes then removes the slot from parkingLot and add this slot id to vacantSlots collection.
+   * Finally sorts the vacantSlots collections to get the nearby slots.
+   * @param slotNum
+   */
   @Override
   public void leave(Integer slotNum) {
     if (hasCreatedParkingLot) {
@@ -83,6 +100,12 @@ public class ParkingLotService implements IParkingLotService {
     }
   }
 
+  /**
+   * Prints all the vehicles slotNumber, registrationNum and vehicle color.
+   * It will check whether ParkingLot is created or not.
+   * If yes then iterate all the parking lot map and prints the slotNumber, registrationNum and vehicle color
+   *
+   */
   @Override
   public void status() {
     if (hasCreatedParkingLot) {
@@ -92,13 +115,20 @@ public class ParkingLotService implements IParkingLotService {
         Integer slotNumber = iterator.next();
         Vehicle vehicle = parkingLot.get(slotNumber);
         LogUtils
-            .toConsole(slotNumber + "       " + vehicle.getRegistrationNum() + "      " + vehicle
+            .toConsole(slotNumber + "\t" + vehicle.getRegistrationNum() + "\t" + vehicle
                 .getColor());
       }
     } else {
       LogUtils.toConsole("ParkingLot is not yet created");
     }
   }
+
+  /**
+   * Returns registrationNumbers by color.
+   * It will check whether ParkingLot is created or not.
+   * If yes then iterate all the parking lot map and checks if the color matches then returns comma separated registration numbers.
+   * @param color
+   */
 
   @Override
   public void getRegistrationNumbersByColour(String color) {
@@ -122,6 +152,13 @@ public class ParkingLotService implements IParkingLotService {
     }
   }
 
+  /***
+   * Returns Slot numbers by color.
+   * It will check whether ParkingLot is created or not.
+   * If yes then iterate all the parking lot map and checks if the color matches then returns comma separated slot numbers.
+   *
+   * @param color
+   */
   @Override
   public void getSlotNumbersByColor(String color) {
     if (hasCreatedParkingLot) {
@@ -144,6 +181,12 @@ public class ParkingLotService implements IParkingLotService {
     }
   }
 
+  /**
+   * This function will return the slot number by registrationNum number.
+   * It will check whether ParkingLot is created or not.
+   * If it is created then iterate parkingLot map and returns the slot number if it exists else returns "Not found"
+   * @param registrationNum
+   */
   @Override
   public void getSlotNumberByRegistrationNum(String registrationNum) {
     if (hasCreatedParkingLot) {
@@ -162,6 +205,10 @@ public class ParkingLotService implements IParkingLotService {
     }
   }
 
+  /**
+   * This method is used to create the singleton object of ParkingLotService synchronized helps to
+   * prevent creating multiple instances in multi threaded env
+   */
   public static ParkingLotService getParkingLotService() {
     if (null == parkingLotService) {
       synchronized (ParkingLotService.class) {
